@@ -107,16 +107,7 @@
             <div class="config-section">
               <h3 class="config-section-title"><span class="config-section-icon">⚙️</span> Regras Gerais</h3>
               <div class="config-row"><label class="config-label">Tempo por rodada</label><div class="config-options" id="opt-timer"><button class="config-opt" data-value="30">30s</button><button class="config-opt" data-value="60">60s</button><button class="config-opt active" data-value="90">90s</button><button class="config-opt" data-value="120">120s</button><button class="config-opt" data-value="0">Sem limite</button></div></div>
-              <div class="config-row"><label class="config-label">Tamanho do tabuleiro</label><div class="config-options" id="opt-tiles"><button class="config-opt" data-value="20">20 casas</button><button class="config-opt" data-value="30">30 casas</button><button class="config-opt active" data-value="40">40 casas</button><button class="config-opt" data-value="50">50 casas</button></div></div>
-              <div class="config-row"><label class="config-label">Maximo de dicas por carta</label><div class="config-options" id="opt-maxhints"><button class="config-opt" data-value="3">3 dicas</button><button class="config-opt" data-value="5">5 dicas</button><button class="config-opt" data-value="7">7 dicas</button><button class="config-opt active" data-value="10">10 dicas</button></div></div>
-              <div class="config-row"><label class="config-label">Ordem das dicas</label><div class="config-options" id="opt-hintorder"><button class="config-opt active" data-value="free">Livre escolha</button><button class="config-opt" data-value="sequential">Sequencial</button></div></div>
-              <div class="config-row"><label class="config-label">Permitir "Passar"</label><div class="config-options" id="opt-pass"><button class="config-opt active" data-value="yes">Sim</button><button class="config-opt" data-value="no">Nao</button></div></div>
-            </div>
-            <div class="config-section">
-              <h3 class="config-section-title"><span class="config-section-icon">🃏</span> Temas das Cartas</h3>
-              <p class="config-hint">Selecione quais temas serao usados. Minimo: 5.</p>
-              <div class="topics-toolbar"><button class="btn-secondary btn-small" id="btn-select-all">Selecionar Todos</button><button class="btn-secondary btn-small" id="btn-deselect-all">Desmarcar Todos</button><span class="topics-count"><span id="topics-selected-count">0</span>/40</span></div>
-              <div id="topics-grid" class="topics-grid"></div>
+              <div class="config-row"><label class="config-label">Tamanho do tabuleiro</label><div class="config-options" id="opt-tiles"><button class="config-opt" data-value="20">20 casas</button><button class="config-opt" data-value="30">30 casas</button><button class="config-opt active" data-value="40">40 casas</button><button class="config-opt" data-value="50">50 casas</button><button class="config-opt" data-value="75">75 casas</button><button class="config-opt" data-value="100">100 casas</button><button class="config-opt" data-value="150">150 casas</button><button class="config-opt" data-value="200">200 casas</button></div></div>
             </div>
             <div class="config-bottom-row">
               <button id="btn-go-players" class="btn-primary btn-lg">Proximo: Jogadores →</button>
@@ -194,7 +185,6 @@
               <div class="turn-announce-pawn" id="turn-announce-pawn"></div>
               <h2 id="turn-announce-name">Jogador</h2>
               <p>e sua vez!</p>
-              <div id="turn-streak-info" class="turn-streak-info hidden"></div>
               <button id="btn-start-turn" class="btn-primary btn-lg btn-start-turn">🎴 Sortear Carta</button>
             </div>
           </div>

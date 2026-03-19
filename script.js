@@ -2,11 +2,11 @@
 const PLAYER_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653'];
 const ALL_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653','#8B5CF6','#EC4899','#14B8A6','#F97316','#6366F1','#84CC16'];
 const TILES_PER_ROW = 5;
-const TILE_ICONS = ['🌱','🌿','🍃','🌎','💧','☀️','🌊','🦋','🐢','🌺','🔬','♻️'];
 const CIRCUMFERENCE = 2 * Math.PI * 45;
 
 // ========== CONFIG ==========
 let config = { timerSeconds:90, totalTiles:40, maxHints:10, hintOrder:'free', allowPass:true, enabledCardIndices:[] };
+// maxHints is always 10, hintOrder always 'free', allowPass always true, all cards always enabled
 
 // ========== STATE ==========
 let state = { players:[], currentPlayerIndex:0, usedCardIndices:[], gameOver:false, totalRounds:0 };
@@ -71,39 +71,22 @@ function setupOptionGroup(id) {
   const c = document.getElementById(id);
   c.addEventListener('click', e => { const b=e.target.closest('.config-opt'); if(!b)return; sfxClick(); c.querySelectorAll('.config-opt').forEach(x=>x.classList.remove('active')); b.classList.add('active'); });
 }
-['opt-timer','opt-tiles','opt-maxhints','opt-hintorder','opt-pass'].forEach(setupOptionGroup);
+['opt-timer','opt-tiles'].forEach(setupOptionGroup);
 
 function getOpt(id) { const a=document.querySelector(`#${id} .config-opt.active`); return a?a.dataset.value:null; }
 
 function buildTopicsGrid() {
-  const g=document.getElementById('topics-grid'); g.innerHTML='';
-  CARDS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='topic-item selected'; d.dataset.index=i;
-    d.innerHTML=`<div class="topic-check">✓</div><span class="topic-name">${c.topic}</span>`;
-    d.addEventListener('click',()=>{ sfxClick(); d.classList.toggle('selected'); d.querySelector('.topic-check').textContent=d.classList.contains('selected')?'✓':''; updateTopicsCount(); });
-    g.appendChild(d); }); updateTopicsCount();
+  // All cards are always enabled - no selection needed
 }
-function updateTopicsCount(){
-  const sel = document.querySelectorAll('.topic-item.selected').length;
-  const total = document.querySelectorAll('.topic-item').length;
-  document.getElementById('topics-selected-count').textContent = sel;
-  // Update the total dynamically
-  const counter = document.querySelector('.topics-count');
-  if(counter) counter.innerHTML = `<span id="topics-selected-count">${sel}</span>/${total}`;
-}
-document.getElementById('btn-select-all').addEventListener('click',()=>{ sfxClick(); document.querySelectorAll('.topic-item').forEach(i=>{i.classList.add('selected');i.querySelector('.topic-check').textContent='✓';}); updateTopicsCount(); });
-document.getElementById('btn-deselect-all').addEventListener('click',()=>{ sfxClick(); document.querySelectorAll('.topic-item').forEach(i=>{i.classList.remove('selected');i.querySelector('.topic-check').textContent='';}); updateTopicsCount(); });
 
 document.getElementById('btn-go-players').addEventListener('click',()=>{
   sfxClick();
-  const sel=document.querySelectorAll('.topic-item.selected');
-  if(sel.length<5){alert('Selecione pelo menos 5 temas!');return;}
   config.timerSeconds=parseInt(getOpt('opt-timer')); config.totalTiles=parseInt(getOpt('opt-tiles'));
-  config.maxHints=parseInt(getOpt('opt-maxhints')); config.hintOrder=getOpt('opt-hintorder');
-  config.allowPass=getOpt('opt-pass')==='yes'; config.enabledCardIndices=[];
-  sel.forEach(i=>config.enabledCardIndices.push(parseInt(i.dataset.index)));
+  config.maxHints=10; config.hintOrder='free';
+  config.allowPass=true; config.enabledCardIndices=CARDS.map((_,i)=>i);
   const s=document.getElementById('config-summary');
   const tl=config.timerSeconds===0?'Sem limite':`${config.timerSeconds}s`;
-  s.innerHTML=`<span>⏱️ Tempo: <strong>${tl}</strong></span><span>🎯 Tabuleiro: <strong>${config.totalTiles} casas</strong></span><span>💡 Max dicas: <strong>${config.maxHints}</strong></span><span>🔀 Ordem: <strong>${config.hintOrder==='free'?'Livre':'Sequencial'}</strong></span><span>⏭️ Passar: <strong>${config.allowPass?'Sim':'Nao'}</strong></span><span>🃏 Temas: <strong>${config.enabledCardIndices.length}</strong></span>`;
+  s.innerHTML=`<span>⏱️ Tempo: <strong>${tl}</strong></span><span>🎯 Tabuleiro: <strong>${config.totalTiles} casas</strong></span><span>💡 Dicas: <strong>10</strong></span><span>🃏 Temas: <strong>${CARDS.length}</strong></span>`;
   switchScreen('screen-config','screen-players');
   // Focus first empty name input
   setTimeout(()=>{
@@ -208,7 +191,7 @@ document.getElementById('btn-start').addEventListener('click',()=>{
     const inp = row.querySelector('input');
     const picker = row.querySelector('.player-color-picker');
     const color = picker ? picker.dataset.color : PLAYER_COLORS[i];
-    state.players.push({name:inp.value.trim()||`Jogador ${i+1}`,color:color,position:0,score:0,correctAnswers:0,totalAnswers:0,streak:0,bestStreak:0});
+    state.players.push({name:inp.value.trim()||`Jogador ${i+1}`,color:color,position:0,score:0,correctAnswers:0,totalAnswers:0});
   });
   state.currentPlayerIndex=0; state.usedCardIndices=[]; state.cardDeck=null; state.gameOver=false; roundNumber=0;
   switchScreen('screen-players','screen-game');
@@ -252,13 +235,13 @@ function buildBoard(){
 
       if (i === 0) {
         t.classList.add('tile-start');
-        t.innerHTML = `<span class="tile-icon">🏁</span><span class="tile-label">INICIO</span>`;
+        t.innerHTML = `<span class="tile-label">INICIO</span>`;
       } else if (i === total) {
         t.classList.add('tile-end');
-        t.innerHTML = `<span class="tile-icon">🏆</span><span class="tile-label">FIM</span>`;
+        t.innerHTML = `<span class="tile-label">FIM</span>`;
       } else {
         t.classList.add('tile-normal', `tile-color-${i % 5}`);
-        t.innerHTML = `<span class="tile-number">${i}</span><span class="tile-icon">${TILE_ICONS[i % TILE_ICONS.length]}</span>`;
+        t.innerHTML = `<span class="tile-number">${i}</span>`;
       }
 
       const pw = document.createElement('div');
@@ -315,16 +298,14 @@ function renderPlayerPanels(){ const c=document.getElementById('player-panels');
   state.players.forEach((p,i)=>{ const d=document.createElement('div'); d.className='player-panel'; d.id=`panel-${i}`;
     const pct=p.totalAnswers>0?Math.round(p.correctAnswers/p.totalAnswers*100):0;
     const progress=Math.min(100,Math.round(p.position/config.totalTiles*100));
-    const streakText = p.streak >= 2 ? `<span class="streak-badge">🔥${p.streak}</span>` : '';
-    d.innerHTML=`<div class="player-panel-header"><div class="player-pawn" style="--pw-color:${p.color}"></div><span class="player-panel-name">${p.name}</span>${streakText}</div><div class="player-panel-stats"><span>${p.score} pts</span><span>${p.position}/${config.totalTiles}</span></div><div class="player-progress"><div class="player-progress-bar" style="width:${progress}%;background:${p.color}"></div></div><div class="player-panel-extra">${pct}% acertos (${p.correctAnswers}/${p.totalAnswers})</div>`;
+    d.innerHTML=`<div class="player-panel-header"><div class="player-pawn" style="--pw-color:${p.color}"></div><span class="player-panel-name">${p.name}</span></div><div class="player-panel-stats"><span>${p.score} pts</span><span>${p.position}/${config.totalTiles}</span></div><div class="player-progress"><div class="player-progress-bar" style="width:${progress}%;background:${p.color}"></div></div><div class="player-panel-extra">${pct}% acertos (${p.correctAnswers}/${p.totalAnswers})</div>`;
     c.appendChild(d); }); highlightActivePlayer();
   updateBoardMeta();
 }
 function updatePlayerPanel(i){ const p=state.players[i],d=document.getElementById(`panel-${i}`); if(!d)return;
   const pct=p.totalAnswers>0?Math.round(p.correctAnswers/p.totalAnswers*100):0;
   const progress=Math.min(100,Math.round(p.position/config.totalTiles*100));
-  const streakText = p.streak >= 2 ? `<span class="streak-badge">🔥${p.streak}</span>` : '';
-  d.querySelector('.player-panel-header').innerHTML=`<div class="player-pawn" style="--pw-color:${p.color}"></div><span class="player-panel-name">${p.name}</span>${streakText}`;
+  d.querySelector('.player-panel-header').innerHTML=`<div class="player-pawn" style="--pw-color:${p.color}"></div><span class="player-panel-name">${p.name}</span>`;
   d.querySelector('.player-panel-stats').innerHTML=`<span>${p.score} pts</span><span>${Math.min(p.position,config.totalTiles)}/${config.totalTiles}</span>`;
   d.querySelector('.player-progress-bar').style.width=progress+'%';
   d.querySelector('.player-panel-extra').textContent=`${pct}% acertos (${p.correctAnswers}/${p.totalAnswers})`;
@@ -348,14 +329,6 @@ function showTurnAnnounce(){
   const p=state.players[state.currentPlayerIndex];
   document.getElementById('turn-announce-pawn').style.background=p.color;
   document.getElementById('turn-announce-name').textContent=p.name;
-  // Show streak info
-  const streakEl = document.getElementById('turn-streak-info');
-  if(p.streak >= 2){
-    streakEl.textContent = `🔥 Sequencia de ${p.streak} acertos! (+bonus)`;
-    streakEl.classList.remove('hidden');
-  } else {
-    streakEl.classList.add('hidden');
-  }
   showView('view-turn');
 }
 
@@ -426,12 +399,10 @@ function startTurn(){
   document.getElementById('card-instruction').classList.remove('hidden');
   const hg=document.getElementById('hints-buttons'); hg.innerHTML='';
   for(let i=0;i<config.maxHints;i++){ const b=document.createElement('button'); b.className='hint-btn'; b.textContent=i+1;
-    if(config.hintOrder==='sequential'&&i>0)b.classList.add('hint-locked');
-    b.addEventListener('click',()=>{if(!b.classList.contains('hint-locked'))revealHint(i);}); hg.appendChild(b); }
-  hg.style.gridTemplateColumns=config.maxHints<=5?`repeat(${config.maxHints},1fr)`:'repeat(5,1fr)';
+    b.addEventListener('click',()=>revealHint(i)); hg.appendChild(b); }
+  hg.style.gridTemplateColumns='repeat(5,1fr)';
   document.getElementById('hints-history').innerHTML=''; document.getElementById('hints-history').classList.add('hidden');
   document.getElementById('guess-area').classList.add('hidden');
-  document.getElementById('btn-pass').style.display=config.allowPass?'':'none';
   showView('view-card');
 }
 function calcPoints(n){ return Math.max(1,config.maxHints+1-Math.max(1,n)); }
@@ -440,7 +411,6 @@ function calcPoints(n){ return Math.max(1,config.maxHints+1-Math.max(1,n)); }
 const MSG_PERFECT=['Genio! 🧠','Incrivel! 🌟','Mestre! 👑','Impressionante! 💎'];
 const MSG_GREAT=['Muito bem! 🎯','Excelente! ✨','Otimo! 🔥','Mandou bem! 💪'];
 const MSG_GOOD=['Boa! 👏','Acertou! 😄','Isso ai! 👍','Valeu! 🙌'];
-const MSG_STREAK=['Sequencia de fogo! 🔥','Imparavel! ⚡','Combo! 💥','On fire! 🌋'];
 const MSG_WRONG=['Na proxima! 💪','Quase la! 😅','Tente de novo! 🎯','Faz parte! 🤷'];
 
 function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
@@ -453,7 +423,6 @@ function revealHint(index){
   const btns=document.querySelectorAll('.hint-btn');
   btns.forEach((b,i)=>{b.classList.remove('hint-active');if(hintsUsed.includes(i))b.classList.add('hint-used');});
   btns[index].classList.add('hint-active'); btns[index].classList.remove('hint-used');
-  if(config.hintOrder==='sequential'&&hintsCount<config.maxHints)btns[hintsCount].classList.remove('hint-locked');
   const hd=document.getElementById('hints-history'); hd.classList.remove('hidden');
   const it=document.createElement('div'); it.className='hint-history-item'; it.innerHTML=`<span class="hint-number">#${index+1}</span>${currentCard.hints[index]}`; hd.appendChild(it); hd.scrollTop=hd.scrollHeight;
   document.getElementById('hints-used-count').textContent=hintsCount; document.getElementById('possible-points').textContent=calcPoints(hintsCount);
@@ -465,7 +434,7 @@ function revealHint(index){
 document.getElementById('btn-guess').addEventListener('click',submitGuess);
 document.getElementById('guess-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitGuess();});
 document.getElementById('btn-next-hint').addEventListener('click',()=>{ sfxClick();
-  if(config.hintOrder==='sequential')revealHint(hintsCount); else for(let i=0;i<config.maxHints;i++){if(!hintsUsed.includes(i)){revealHint(i);break;}} });
+  for(let i=0;i<config.maxHints;i++){if(!hintsUsed.includes(i)){revealHint(i);break;}} });
 document.getElementById('btn-pass').addEventListener('click',()=>{ sfxClick(); stopTimer(); state.players[state.currentPlayerIndex].totalAnswers++; revealCategory(); showResult(false,0,false); });
 
 function normalizeText(t){ return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,' '); }
@@ -506,28 +475,16 @@ function showResult(correct,points,timedOut){
   const rp=document.getElementById('result-panel-el');
   rp.classList.remove('result-correct','result-wrong');
 
-  // Update streak
-  let streakBonus = 0;
-  if(correct){
-    p.streak++;
-    if(p.streak > p.bestStreak) p.bestStreak = p.streak;
-    if(p.streak >= 3) streakBonus = Math.min(p.streak - 2, 3);
-  } else {
-    p.streak = 0;
-  }
-
-  const totalMove = correct ? points + streakBonus : 0;
+  const totalMove = correct ? points : 0;
 
   rp.classList.add(correct?'result-correct':'result-wrong');
 
   // Icon & title
   if(correct){
     if(hintsCount <= 2) document.getElementById('result-icon').textContent = '🏆';
-    else if(p.streak >= 3) document.getElementById('result-icon').textContent = '🔥';
     else document.getElementById('result-icon').textContent = '✅';
 
     if(hintsCount <= 2) document.getElementById('result-title').textContent = pickRandom(MSG_PERFECT);
-    else if(p.streak >= 3) document.getElementById('result-title').textContent = pickRandom(MSG_STREAK);
     else if(hintsCount <= 4) document.getElementById('result-title').textContent = pickRandom(MSG_GREAT);
     else document.getElementById('result-title').textContent = pickRandom(MSG_GOOD);
   } else {
@@ -541,10 +498,8 @@ function showResult(correct,points,timedOut){
   if(correct){
     document.getElementById('result-text').innerHTML = `${p.name} acertou com ${hintsCount} dica${hintsCount>1?'s':''}!<br>${topic}`;
     detailsHtml = `<div class="result-breakdown">`;
-    detailsHtml += `<div class="result-row"><span>🎯 Base</span><strong>+${points} casa${points>1?'s':''}</strong></div>`;
-    if(streakBonus > 0) detailsHtml += `<div class="result-row result-bonus"><span>🔥 Streak x${p.streak}</span><strong>+${streakBonus} bonus</strong></div>`;
+    detailsHtml += `<div class="result-row"><span>🎯 Casas</span><strong>+${points} casa${points>1?'s':''}</strong></div>`;
     if(hintsCount <= 2) detailsHtml += `<div class="result-row result-bonus"><span>⚡ Acerto rapido!</span><strong></strong></div>`;
-    detailsHtml += `<div class="result-row result-total"><span>Total</span><strong>${totalMove} casa${totalMove>1?'s':''}</strong></div>`;
     detailsHtml += `</div>`;
   } else {
     document.getElementById('result-text').innerHTML = `${p.name} ${timedOut?'o tempo acabou':'nao acertou'}.<br>${topic}`;
@@ -584,7 +539,7 @@ function showVictory(wi){ state.gameOver=true; clearSave(); document.getElementB
       <div class="final-score-pos ${pc[i]||''}">${i+1}°</div>
       <div class="player-pawn" style="--pw-color:${p.color}"></div>
       <span class="final-score-name">${p.name}</span>
-      <span class="final-score-stats">${pct}% acertos | 🔥${p.bestStreak} melhor streak</span>
+      <span class="final-score-stats">${pct}% acertos (${p.correctAnswers}/${p.totalAnswers})</span>
     </div>`;}).join('');
   showView('view-victory');
 }
@@ -806,5 +761,4 @@ function checkForSavedGame() {
 }
 
 // ========== INIT ==========
-buildTopicsGrid();
 checkForSavedGame();
