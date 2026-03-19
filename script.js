@@ -572,10 +572,10 @@ function showResult(correct,points,timedOut){
 }
 
 // ========== NEXT TURN ==========
-function nextTurn(){ state.currentPlayerIndex=(state.currentPlayerIndex+1)%state.players.length; highlightActivePlayer(); updateTurnIndicator(); setTimeout(()=>showTurnAnnounce(),300); }
+function nextTurn(){ state.currentPlayerIndex=(state.currentPlayerIndex+1)%state.players.length; highlightActivePlayer(); updateTurnIndicator(); saveGame(); setTimeout(()=>showTurnAnnounce(),300); }
 
 // ========== VICTORY ==========
-function showVictory(wi){ state.gameOver=true; document.getElementById('victory-player').textContent=state.players[wi].name;
+function showVictory(wi){ state.gameOver=true; clearSave(); document.getElementById('victory-player').textContent=state.players[wi].name;
   const sorted=[...state.players].sort((a,b)=>b.position!==a.position?b.position-a.position:b.score-a.score);
   const pc=['gold','silver','bronze'];
   document.getElementById('final-scores').innerHTML=sorted.map((p,i)=>{
@@ -588,7 +588,7 @@ function showVictory(wi){ state.gameOver=true; document.getElementById('victory-
     </div>`;}).join('');
   showView('view-victory');
 }
-document.getElementById('btn-new-game').addEventListener('click',()=>{ sfxClick(); switchScreen('screen-game','screen-config'); });
+document.getElementById('btn-new-game').addEventListener('click',()=>{ sfxClick(); clearSave(); switchScreen('screen-game','screen-config'); });
 
 // ========== PAUSE / RESUME ==========
 document.getElementById('btn-pause').addEventListener('click',()=>{ sfxClick();
@@ -609,7 +609,7 @@ document.getElementById('btn-sidebar-inicio').addEventListener('click',()=>{
     'Voltar ao Inicio',
     'O progresso do jogo sera perdido. Deseja continuar?',
     '🏠',
-    () => { pausedView = null; switchScreen('screen-game','screen-config'); }
+    () => { pausedView = null; clearSave(); switchScreen('screen-game','screen-config'); }
   );
 });
 
@@ -628,8 +628,15 @@ document.getElementById('btn-config-sobre').addEventListener('click', openSobre)
 document.getElementById('btn-sobre-close').addEventListener('click', closeSobre);
 
 // ========== GABARITO DO PROFESSOR (available everywhere) ==========
-const GABARITO_SENHA = 'labecohumana';
+// SHA-256 hash of the password (not stored in plaintext)
+const GABARITO_SENHA_HASH = 'a4b1627476df97e9cb8810dc82cf0d957bed59b37addd99b22b0a614798a56b7';
 let gabaritoAuthed = false;
+
+async function hashPassword(pwd) {
+  const data = new TextEncoder().encode(pwd);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 function openGabarito() {
   sfxClick();
@@ -660,9 +667,10 @@ document.getElementById('btn-config-gabarito').addEventListener('click', openGab
 document.getElementById('btn-gabarito-enter').addEventListener('click', tryGabaritoLogin);
 document.getElementById('gabarito-password').addEventListener('keydown', e => { if (e.key === 'Enter') tryGabaritoLogin(); });
 
-function tryGabaritoLogin() {
+async function tryGabaritoLogin() {
   const pwd = document.getElementById('gabarito-password').value;
-  if (pwd === GABARITO_SENHA) {
+  const hash = await hashPassword(pwd);
+  if (hash === GABARITO_SENHA_HASH) {
     gabaritoAuthed = true;
     document.getElementById('gabarito-login').style.display = 'none';
     document.getElementById('gabarito-search').classList.remove('hidden');
@@ -729,142 +737,74 @@ document.getElementById('gabarito-input').addEventListener('input', () => {
   results.innerHTML = html;
 });
 
-// ========== CUSTOM CARDS ==========
-const PROMPTS = {
-  biomas: `Crie 5 cartas para um jogo de adivinhacao sobre BIOMAS BRASILEIROS. Cada carta deve ter o formato JSON: {"topic": "Nome do Bioma", "hints": ["dica1", "dica2", ..., "dica10"], "aliases": ["nomes alternativos"]}. As 10 dicas devem ir da mais dificil (abstrata) para a mais facil (obvia), escritas em primeira pessoa ("Sou...", "Tenho...", "Possuo..."). Retorne APENAS um array JSON valido, sem explicacoes.`,
-  corpo: `Gere 5 cartas sobre SISTEMAS DO CORPO HUMANO para um quiz educativo. Formato JSON: [{"topic": "Nome do Sistema", "hints": ["dica1",...,"dica10"], "aliases": ["sinonimos"]}]. Cada carta precisa de exatamente 10 dicas em primeira pessoa, da mais dificil para a mais facil. Temas: Sistema Circulatorio, Sistema Nervoso, Sistema Digestorio, Sistema Respiratorio, Sistema Excretor. Retorne SOMENTE o JSON.`,
-  ecologia: `Crie 5 cartas sobre CONCEITOS DE ECOLOGIA para um jogo de tabuleiro. Formato: [{"topic": "Conceito", "hints": ["10 dicas em primeira pessoa"], "aliases": ["sinonimos"]}]. Temas: Nicho Ecologico, Cadeia Alimentar, Sucessao Ecologica, Bioacumulacao, Simbiose. Dicas progressivas (dificil para facil). Retorne apenas o array JSON valido.`,
-  livre: `Crie 5 cartas para um jogo de adivinhacao sobre [SEU TEMA AQUI]. Cada carta: {"topic": "Resposta", "hints": ["dica1",...,"dica10"], "aliases": ["nomes alternativos"]}. Regras: exatamente 10 dicas por carta, escritas em primeira pessoa, ordenadas da mais dificil/abstrata para a mais facil/obvia. Retorne APENAS um array JSON valido sem nenhum texto extra.`
-};
-
-let validatedCustomCards = null;
-
-function openCustomCards() {
-  sfxClick();
-  document.getElementById('custom-cards-overlay').classList.remove('hidden');
-}
-function closeCustomCards() {
-  document.getElementById('custom-cards-overlay').classList.add('hidden');
-}
-
-document.getElementById('btn-config-custom-cards').addEventListener('click', openCustomCards);
-document.getElementById('btn-custom-close').addEventListener('click', closeCustomCards);
-
-// Copy prompt buttons
-document.querySelectorAll('.btn-copy-prompt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const key = btn.dataset.prompt;
-    const text = PROMPTS[key] || '';
-    navigator.clipboard.writeText(text).then(() => {
-      btn.classList.add('copied');
-      btn.textContent = '✓ Copiado!';
-      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copiar'; }, 2000);
-    }).catch(() => {
-      // Fallback: select textarea
-      const ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta);
-      ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta);
-      btn.classList.add('copied');
-      btn.textContent = '✓ Copiado!';
-      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copiar'; }, 2000);
-    });
-  });
-});
-
-function cleanJsonInput(text) {
-  let c = text.trim();
-  c = c.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '');
-  return c;
-}
-
-function validateCustomCards(text) {
-  try {
-    const cleaned = cleanJsonInput(text);
-    const parsed = JSON.parse(cleaned);
-    const arr = Array.isArray(parsed) ? parsed : [parsed];
-    const errors = [];
-    arr.forEach((card, i) => {
-      if (!card.topic || typeof card.topic !== 'string') errors.push(`Carta ${i+1}: campo "topic" ausente ou invalido`);
-      if (!Array.isArray(card.hints) || card.hints.length < 3) errors.push(`Carta ${i+1}: precisa de pelo menos 3 dicas em "hints"`);
-      if (card.hints && card.hints.some(h => typeof h !== 'string')) errors.push(`Carta ${i+1}: todas as dicas devem ser texto`);
-    });
-    return { valid: errors.length === 0, cards: arr, errors };
-  } catch(e) {
-    return { valid: false, cards: [], errors: ['JSON invalido: verifique se o formato esta correto.'] };
-  }
-}
-
-document.getElementById('btn-custom-validate').addEventListener('click', () => {
-  sfxClick();
-  const text = document.getElementById('custom-cards-input').value.trim();
-  const status = document.getElementById('custom-cards-status');
-  const addBtn = document.getElementById('btn-custom-add');
-
-  if (!text) {
-    status.className = 'custom-cards-status status-err';
-    status.textContent = 'Cole o JSON no campo acima.';
-    addBtn.disabled = true;
-    validatedCustomCards = null;
-    return;
-  }
-
-  const result = validateCustomCards(text);
-  status.classList.remove('hidden');
-
-  if (result.valid) {
-    validatedCustomCards = result.cards;
-    status.className = 'custom-cards-status status-ok';
-    status.innerHTML = `✅ ${result.cards.length} carta(s) valida(s) encontrada(s)!<br>${result.cards.map(c => `<strong>${c.topic}</strong>`).join(', ')}`;
-    addBtn.disabled = false;
-  } else {
-    validatedCustomCards = null;
-    status.className = 'custom-cards-status status-err';
-    status.innerHTML = '❌ ' + result.errors.join('<br>❌ ');
-    addBtn.disabled = true;
-  }
-});
-
-document.getElementById('btn-custom-add').addEventListener('click', () => {
-  if (!validatedCustomCards) return;
-  sfxClick();
-
-  validatedCustomCards.forEach(c => {
-    if (!c.aliases) c.aliases = [c.topic.toLowerCase()];
-    while (c.hints.length < 10) c.hints.push(c.hints[c.hints.length - 1]);
-    if (c.hints.length > 10) c.hints = c.hints.slice(0, 10);
-    CARDS.push(c);
-  });
-
-  buildTopicsGrid();
-
-  const status = document.getElementById('custom-cards-status');
-  status.className = 'custom-cards-status status-ok';
-  status.innerHTML = `✅ ${validatedCustomCards.length} carta(s) adicionada(s) com sucesso! Agora tem ${CARDS.length} cartas no total.`;
-
-  validatedCustomCards = null;
-  document.getElementById('btn-custom-add').disabled = true;
-  document.getElementById('custom-cards-input').value = '';
-
-  // Auto close after 1.5s
-  setTimeout(() => closeCustomCards(), 1500);
-});
-
 // ========== CLOSE OVERLAYS ON BACKDROP CLICK ==========
 document.getElementById('gabarito-overlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeGabarito(); });
 document.getElementById('sobre-overlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeSobre(); });
-document.getElementById('custom-cards-overlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeCustomCards(); });
 document.getElementById('confirm-overlay').addEventListener('click', e => { if(e.target === e.currentTarget) document.getElementById('confirm-overlay').classList.add('hidden'); });
 
 // ========== KEYBOARD: ESC CLOSES OVERLAYS ==========
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape') {
-    if(!document.getElementById('custom-cards-overlay').classList.contains('hidden')) closeCustomCards();
-    else if(!document.getElementById('gabarito-overlay').classList.contains('hidden')) closeGabarito();
+    if(!document.getElementById('gabarito-overlay').classList.contains('hidden')) closeGabarito();
     else if(!document.getElementById('sobre-overlay').classList.contains('hidden')) closeSobre();
     else if(!document.getElementById('confirm-overlay').classList.contains('hidden')) document.getElementById('confirm-overlay').classList.add('hidden');
   }
 });
 
+// ========== LOCAL STORAGE PERSISTENCE ==========
+const SAVE_KEY = 'biodesafio_save';
+
+function saveGame() {
+  if(state.gameOver) { localStorage.removeItem(SAVE_KEY); return; }
+  const save = {
+    config: config,
+    state: state,
+    roundNumber: roundNumber,
+    version: 1
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch(e) {}
+}
+
+function clearSave() { localStorage.removeItem(SAVE_KEY); }
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const save = JSON.parse(raw);
+    if (!save || !save.state || !save.config || !save.state.players || save.state.players.length < 2) { clearSave(); return false; }
+    // Validate that card indices still exist
+    if (save.config.enabledCardIndices.some(i => i >= CARDS.length)) { clearSave(); return false; }
+    return save;
+  } catch(e) { clearSave(); return false; }
+}
+
+function resumeSavedGame(save) {
+  config = save.config;
+  state = save.state;
+  roundNumber = save.roundNumber || 0;
+  switchScreen('screen-config', 'screen-game');
+  buildBoard(); renderPlayerPanels(); updateTurnIndicator(); renderPawns();
+  setTimeout(() => showTurnAnnounce(), 300);
+}
+
+function checkForSavedGame() {
+  const save = loadGame();
+  if (!save) return;
+  const names = save.state.players.map(p => p.name).join(', ');
+  showConfirm(
+    'Continuar Jogo?',
+    `Existe um jogo salvo com ${save.state.players.length} jogadores (${names}). Deseja continuar de onde parou?`,
+    '💾',
+    () => resumeSavedGame(save)
+  );
+  // Override cancel to clear save
+  document.getElementById('confirm-cancel').onclick = () => {
+    document.getElementById('confirm-overlay').classList.add('hidden');
+    clearSave();
+  };
+}
+
 // ========== INIT ==========
 buildTopicsGrid();
+checkForSavedGame();

@@ -49,67 +49,6 @@
     </div>
   </div>
 
-  <!-- CARTAS PERSONALIZADAS -->
-  <div id="custom-cards-overlay" class="modal-overlay hidden">
-    <div class="custom-cards-content">
-      <button id="btn-custom-close" class="btn-sobre-close">✕</button>
-      <div class="custom-cards-header">
-        <h2>🃏 Cartas Personalizadas</h2>
-        <p>Crie suas proprias cartas com temas, dicas e respostas!</p>
-      </div>
-      <div class="custom-cards-body">
-        <div class="custom-section">
-          <h3>📋 Como usar</h3>
-          <p>Use um dos <strong>prompts de exemplo</strong> abaixo para gerar cartas com o ChatGPT, depois cole o resultado no campo de texto.</p>
-        </div>
-
-        <div class="custom-section">
-          <h3>💡 Prompts para o ChatGPT</h3>
-          <div class="prompts-list">
-            <div class="prompt-card">
-              <div class="prompt-card-header">
-                <span class="prompt-tag">Biomas</span>
-                <button class="btn-copy-prompt" data-prompt="biomas">📋 Copiar</button>
-              </div>
-              <p class="prompt-text">Crie 5 cartas para um jogo de adivinhacao sobre BIOMAS BRASILEIROS. Cada carta deve ter o formato JSON: {"topic": "Nome do Bioma", "hints": ["dica1", "dica2", ..., "dica10"], "aliases": ["nomes alternativos"]}. As 10 dicas devem ir da mais dificil (abstrata) para a mais facil (obvia), escritas em primeira pessoa ("Sou...", "Tenho...", "Possuo..."). Retorne APENAS um array JSON valido, sem explicacoes.</p>
-            </div>
-            <div class="prompt-card">
-              <div class="prompt-card-header">
-                <span class="prompt-tag">Corpo Humano</span>
-                <button class="btn-copy-prompt" data-prompt="corpo">📋 Copiar</button>
-              </div>
-              <p class="prompt-text">Gere 5 cartas sobre SISTEMAS DO CORPO HUMANO para um quiz educativo. Formato JSON: [{"topic": "Nome do Sistema", "hints": ["dica1",...,"dica10"], "aliases": ["sinonimos"]}]. Cada carta precisa de exatamente 10 dicas em primeira pessoa, da mais dificil para a mais facil. Temas: Sistema Circulatorio, Sistema Nervoso, Sistema Digestorio, Sistema Respiratorio, Sistema Excretor. Retorne SOMENTE o JSON.</p>
-            </div>
-            <div class="prompt-card">
-              <div class="prompt-card-header">
-                <span class="prompt-tag">Ecologia</span>
-                <button class="btn-copy-prompt" data-prompt="ecologia">📋 Copiar</button>
-              </div>
-              <p class="prompt-text">Crie 5 cartas sobre CONCEITOS DE ECOLOGIA para um jogo de tabuleiro. Formato: [{"topic": "Conceito", "hints": ["10 dicas em primeira pessoa"], "aliases": ["sinonimos"]}]. Temas: Nicho Ecologico, Cadeia Alimentar, Sucessao Ecologica, Bioacumulacao, Simbiose. Dicas progressivas (dificil para facil). Retorne apenas o array JSON valido.</p>
-            </div>
-            <div class="prompt-card">
-              <div class="prompt-card-header">
-                <span class="prompt-tag">Tema Livre</span>
-                <button class="btn-copy-prompt" data-prompt="livre">📋 Copiar</button>
-              </div>
-              <p class="prompt-text">Crie 5 cartas para um jogo de adivinhacao sobre [SEU TEMA AQUI]. Cada carta: {"topic": "Resposta", "hints": ["dica1",...,"dica10"], "aliases": ["nomes alternativos"]}. Regras: exatamente 10 dicas por carta, escritas em primeira pessoa, ordenadas da mais dificil/abstrata para a mais facil/obvia. Retorne APENAS um array JSON valido sem nenhum texto extra.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="custom-section">
-          <h3>📝 Cole o JSON aqui</h3>
-          <textarea id="custom-cards-input" class="custom-cards-textarea" placeholder='Cole aqui o JSON gerado pelo ChatGPT...\n\nExemplo:\n[{"topic":"Cerrado","hints":["Dica 1","Dica 2",...,"Dica 10"],"aliases":["cerrado brasileiro"]}]'></textarea>
-          <div id="custom-cards-status" class="custom-cards-status hidden"></div>
-          <div class="custom-cards-actions">
-            <button id="btn-custom-validate" class="btn-secondary btn-small">✓ Validar</button>
-            <button id="btn-custom-add" class="btn-primary btn-small" disabled>+ Adicionar ao Jogo</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- SOBRE -->
   <div id="sobre-overlay" class="modal-overlay hidden">
     <div class="sobre-content">
@@ -182,7 +121,6 @@
             <div class="config-bottom-row">
               <button id="btn-go-players" class="btn-primary btn-lg">Proximo: Jogadores →</button>
               <div class="config-quick-links">
-                <button class="btn-link" id="btn-config-custom-cards">🃏 Cartas Personalizadas</button>
                 <button class="btn-link" id="btn-config-sobre">ℹ️ Sobre</button>
                 <button class="btn-link" id="btn-config-gabarito">🔑 Gabarito</button>
               </div>

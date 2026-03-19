@@ -4,3 +4,5 @@ Thumbs.db
 *.ai
 *.eps
 node_modules/
+
+.vercel
