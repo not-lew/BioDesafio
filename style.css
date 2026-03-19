@@ -100,6 +100,10 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:#eaf3ef;color:va
 .config-section-title{font-size:1rem;color:var(--teal-dark);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.45rem;font-family:'Montserrat',sans-serif}.config-section-icon{font-size:1.1rem}
 .config-row{margin-bottom:0.85rem}.config-label{display:block;font-size:0.85rem;font-weight:700;margin-bottom:0.3rem}
 .config-hint{font-size:0.78rem;color:var(--text-light);margin-bottom:0.5rem;font-weight:600}
+.config-input-row{display:flex;align-items:center;gap:0.5rem}
+.config-number-input{width:90px;padding:0.45rem 0.7rem;border:2px solid var(--bg-dark);border-radius:10px;font-family:'Quicksand','Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--teal-dark);text-align:center;outline:none;transition:border-color 0.2s;background:var(--white)}
+.config-number-input:focus{border-color:var(--teal)}
+.config-input-hint{font-size:0.78rem;font-weight:600;color:var(--text-light)}
 .config-options{display:flex;flex-wrap:wrap;gap:5px}
 .config-opt{padding:0.38rem 0.75rem;border-radius:8px;border:2px solid var(--bg-dark);background:var(--white);font-family:'Quicksand','Montserrat',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s}
 .config-opt:hover{border-color:var(--teal-light);background:var(--bg)}

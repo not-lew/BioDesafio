@@ -71,7 +71,7 @@ function setupOptionGroup(id) {
   const c = document.getElementById(id);
   c.addEventListener('click', e => { const b=e.target.closest('.config-opt'); if(!b)return; sfxClick(); c.querySelectorAll('.config-opt').forEach(x=>x.classList.remove('active')); b.classList.add('active'); });
 }
-['opt-timer','opt-tiles'].forEach(setupOptionGroup);
+['opt-timer'].forEach(setupOptionGroup);
 
 function getOpt(id) { const a=document.querySelector(`#${id} .config-opt.active`); return a?a.dataset.value:null; }
 
@@ -81,7 +81,9 @@ function buildTopicsGrid() {
 
 document.getElementById('btn-go-players').addEventListener('click',()=>{
   sfxClick();
-  config.timerSeconds=parseInt(getOpt('opt-timer')); config.totalTiles=parseInt(getOpt('opt-tiles'));
+  config.timerSeconds=parseInt(getOpt('opt-timer'));
+  const tilesVal = parseInt(document.getElementById('opt-tiles-input').value) || 40;
+  config.totalTiles = Math.max(10, Math.min(200, tilesVal));
   config.maxHints=10; config.hintOrder='free';
   config.allowPass=true; config.enabledCardIndices=CARDS.map((_,i)=>i);
   const s=document.getElementById('config-summary');
