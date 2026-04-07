@@ -436,15 +436,15 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:var(--bg);color:
 
 /* ===== DECORATIVE BOTANICAL IMAGES ===== */
 .config-bg{position:relative;overflow:hidden}
-.deco-config-tree{position:absolute;right:-20px;bottom:-10px;width:200px;opacity:0.1;pointer-events:none;z-index:0;filter:brightness(2)}
-.deco-config-branch-orange{position:absolute;left:-10px;top:60px;width:140px;opacity:0.1;pointer-events:none;z-index:0;transform:rotate(40deg) scaleX(-1);filter:brightness(1.5)}
-.deco-config-divider{display:block;width:180px;margin:0 auto 1rem;opacity:0.35;pointer-events:none}
-.deco-board-topo{position:absolute;right:10px;bottom:10px;width:140px;opacity:0.15;pointer-events:none;z-index:0}
-.deco-board-branch{position:absolute;left:8px;top:10px;width:110px;opacity:0.15;pointer-events:none;z-index:0;transform:rotate(-20deg)}
-.deco-sidebar-branch{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:130px;opacity:0.3;pointer-events:none;z-index:0}
-.deco-center-branch{position:absolute;top:10px;right:15px;width:100px;opacity:0.15;pointer-events:none;z-index:0;transform:scaleX(-1)}
-.deco-center-branch-left{position:absolute;bottom:10px;left:15px;width:90px;opacity:0.12;pointer-events:none;z-index:0;transform:rotate(180deg)}
-.deco-game-tree{position:absolute;left:-10px;bottom:-5px;width:160px;opacity:0.08;pointer-events:none;z-index:0;filter:brightness(1.3)}
+.deco-config-tree{position:absolute;right:-30px;bottom:-20px;width:380px;opacity:0.15;pointer-events:none;z-index:0;filter:brightness(2)}
+.deco-config-branch-orange{position:absolute;left:-20px;top:40px;width:280px;opacity:0.15;pointer-events:none;z-index:0;transform:rotate(40deg) scaleX(-1);filter:brightness(1.5)}
+.deco-config-divider{display:block;width:260px;margin:0 auto 1rem;opacity:0.45;pointer-events:none}
+.deco-board-topo{position:absolute;right:5px;bottom:5px;width:260px;opacity:0.18;pointer-events:none;z-index:0}
+.deco-board-branch{position:absolute;left:5px;top:5px;width:200px;opacity:0.18;pointer-events:none;z-index:0;transform:rotate(-20deg)}
+.deco-sidebar-branch{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:170px;opacity:0.35;pointer-events:none;z-index:0}
+.deco-center-branch{position:absolute;top:5px;right:10px;width:180px;opacity:0.18;pointer-events:none;z-index:0;transform:scaleX(-1)}
+.deco-center-branch-left{position:absolute;bottom:5px;left:10px;width:160px;opacity:0.15;pointer-events:none;z-index:0;transform:rotate(180deg)}
+.deco-game-tree{position:absolute;left:-15px;bottom:-10px;width:300px;opacity:0.12;pointer-events:none;z-index:0;filter:brightness(1.3)}
 .center-area{position:relative;overflow:hidden}
 
 /* ===== RESPONSIVE ===== */
