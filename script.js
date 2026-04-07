@@ -1,7 +1,7 @@
 // ========== CONSTANTS ==========
 const PLAYER_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653'];
 const ALL_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653','#8B5CF6','#EC4899','#14B8A6','#F97316','#6366F1','#84CC16'];
-const TILES_PER_ROW = 5;
+const TILES_PER_ROW = 7;
 const CIRCUMFERENCE = 2 * Math.PI * 45;
 
 // ========== CONFIG ==========
@@ -216,6 +216,10 @@ function buildBoard(){
   const total = config.totalTiles;
   const cols = TILES_PER_ROW;
   const rows = Math.ceil((total + 1) / cols);
+
+  // Scale down fonts, pawns and gaps for large boards
+  const scale = Math.min(1, Math.max(0.3, 8 / rows));
+  board.style.setProperty('--tile-scale', scale);
 
   for (let r = 0; r < rows; r++) {
     const rd = document.createElement('div');
