@@ -439,11 +439,13 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:var(--bg);color:
 .deco-config-tree{position:absolute;right:-20px;bottom:-10px;width:200px;opacity:0.1;pointer-events:none;z-index:0;filter:brightness(2)}
 .deco-config-branch-orange{position:absolute;left:-10px;top:60px;width:140px;opacity:0.1;pointer-events:none;z-index:0;transform:rotate(40deg) scaleX(-1);filter:brightness(1.5)}
 .deco-config-divider{display:block;width:180px;margin:0 auto 1rem;opacity:0.35;pointer-events:none}
-.deco-board-topo{position:absolute;right:15px;bottom:15px;width:100px;opacity:0.06;pointer-events:none;z-index:0}
-.deco-board-branch{position:absolute;left:10px;top:15px;width:80px;opacity:0.07;pointer-events:none;z-index:0;transform:rotate(-20deg)}
-.deco-sidebar-branch{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:120px;opacity:0.15;pointer-events:none;z-index:0}
-.deco-center-branch{position:absolute;top:8px;right:12px;width:70px;opacity:0.08;pointer-events:none;z-index:0;transform:scaleX(-1)}
-.center-area{position:relative}
+.deco-board-topo{position:absolute;right:10px;bottom:10px;width:140px;opacity:0.15;pointer-events:none;z-index:0}
+.deco-board-branch{position:absolute;left:8px;top:10px;width:110px;opacity:0.15;pointer-events:none;z-index:0;transform:rotate(-20deg)}
+.deco-sidebar-branch{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:130px;opacity:0.3;pointer-events:none;z-index:0}
+.deco-center-branch{position:absolute;top:10px;right:15px;width:100px;opacity:0.15;pointer-events:none;z-index:0;transform:scaleX(-1)}
+.deco-center-branch-left{position:absolute;bottom:10px;left:15px;width:90px;opacity:0.12;pointer-events:none;z-index:0;transform:rotate(180deg)}
+.deco-game-tree{position:absolute;left:-10px;bottom:-5px;width:160px;opacity:0.08;pointer-events:none;z-index:0;filter:brightness(1.3)}
+.center-area{position:relative;overflow:hidden}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:1000px){
@@ -460,7 +462,7 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:var(--bg);color:
   .turn-indicator{width:100%;padding:0.2rem}.turn-indicator strong{display:inline;font-size:0.78rem}
   .sidebar-nav{flex-direction:row;margin-top:0;padding-top:0;border-top:none;width:100%}
   .btn-sidebar-nav{width:auto;flex:1;text-align:center;font-size:0.7rem;padding:0.3rem}
-  .deco-board-topo,.deco-board-branch,.deco-center-branch,.deco-sidebar-branch{display:none}
+  .deco-board-topo,.deco-board-branch,.deco-center-branch,.deco-center-branch-left,.deco-sidebar-branch,.deco-game-tree{display:none}
   .board-side{min-height:300px}
   .center-area{max-height:none;height:auto;min-height:280px;border-top:1px solid var(--bg-dark)}
   .board-legend{padding:0.3rem 0.5rem;gap:0.35rem}.board-legend-item{font-size:0.6rem}
