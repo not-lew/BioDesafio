@@ -1,7 +1,8 @@
 // ========== CONSTANTS ==========
 const PLAYER_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653'];
 const ALL_COLORS = ['#E63946','#457B9D','#2A9D8F','#E9C46A','#F4A261','#264653','#8B5CF6','#EC4899','#14B8A6','#F97316','#6366F1','#84CC16'];
-const TILES_PER_ROW = 7;
+const MIN_TILES_PER_ROW = 7;
+const MAX_TILES_PER_ROW = 30;
 const CIRCUMFERENCE = 2 * Math.PI * 45;
 
 // ========== CONFIG ==========
@@ -214,11 +215,20 @@ function buildBoard(){
   const board = document.getElementById('board');
   board.innerHTML = '';
   const total = config.totalTiles;
-  const cols = TILES_PER_ROW;
-  const rows = Math.ceil((total + 1) / cols);
+  const totalCells = total + 1;
 
-  // Scale down fonts, pawns and gaps for large boards
-  const scale = Math.min(1, Math.max(0.3, 8 / rows));
+  // Dynamic columns: aim for ~2.5:1 aspect ratio (cols:rows) so the
+  // board fills the wider-than-tall board area instead of stacking
+  // many short rows.
+  const targetCols = Math.ceil(Math.sqrt(totalCells * 2.5));
+  const cols = Math.max(MIN_TILES_PER_ROW, Math.min(MAX_TILES_PER_ROW, targetCols));
+  const rows = Math.ceil(totalCells / cols);
+
+  // Scale fonts, pawns and gaps based on whichever axis is more
+  // compressed (tall boards lose row height; wide boards lose tile width).
+  const scaleByRows = 7 / rows;
+  const scaleByCols = 12 / cols;
+  const scale = Math.max(0.35, Math.min(1, scaleByRows, scaleByCols));
   board.style.setProperty('--tile-scale', scale);
 
   for (let r = 0; r < rows; r++) {
@@ -713,7 +723,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ========== LOCAL STORAGE PERSISTENCE ==========
-const SAVE_KEY = 'biodesafio_save';
+const SAVE_KEY = 'ecodesafio_save';
 
 function saveGame() {
   if(state.gameOver) { localStorage.removeItem(SAVE_KEY); return; }
