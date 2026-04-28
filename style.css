@@ -152,7 +152,7 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:var(--bg);color:
 .btn-small{padding:0.4rem 0.85rem;font-size:0.8rem;width:auto}
 
 /* ===== GAME LAYOUT ===== */
-.game-layout{display:grid;grid-template-columns:200px 1fr;grid-template-rows:55vh 1fr;height:100vh;position:relative;overflow:clip}
+.game-layout{display:grid;grid-template-columns:200px 1fr;grid-template-rows:50vh 1fr;height:100vh;position:relative;overflow:clip}
 
 /* Background botanical decoration */
 .game-layout::before{
@@ -379,23 +379,23 @@ body{font-family:'Quicksand','Montserrat',sans-serif;background:var(--bg);color:
 @keyframes revealPop{0%{transform:scale(0.8)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
 .card-body{padding:0.4rem 1rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.35rem;flex:1;min-height:0;overflow:hidden}
 .card-instruction{font-size:0.78rem;color:var(--teal-dark);font-weight:700;background:linear-gradient(135deg,var(--bg),var(--bg-dark));padding:0.35rem 0.7rem;border-radius:10px;width:100%;text-align:center;border:1px dashed var(--teal-light);flex-shrink:0}.card-instruction.hidden{display:none}
-#hints-area{display:flex;flex-direction:row;gap:0.75rem;width:100%;flex:1;min-height:0;align-items:stretch;justify-content:center}
-.hints-grid{display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:5px;width:200px;flex-shrink:0;align-content:center}
-.hint-btn{aspect-ratio:1;border-radius:10px;border:2px solid var(--bg-dark);background:var(--white);color:var(--teal-dark);font-family:'Quicksand','Montserrat',sans-serif;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
-.hint-btn:hover:not(.hint-used):not(.hint-locked){background:var(--teal);color:var(--white);border-color:var(--teal);transform:scale(1.08);box-shadow:0 4px 14px rgba(91,168,154,0.3)}
-.hint-btn.hint-used{background:var(--bg);color:var(--text-light);border-color:var(--bg-dark);cursor:default;opacity:0.45}
-.hint-btn.hint-active{background:var(--teal-dark);color:var(--white);border-color:var(--teal-dark);box-shadow:0 0 16px rgba(42,124,127,0.35)}
+#hints-area{display:flex;flex-direction:column;gap:0.4rem;width:100%;flex:1;min-height:0;align-items:stretch}
+.hints-grid{display:flex;flex-direction:row;justify-content:center;gap:6px;width:100%;flex-shrink:0}
+.hint-btn{width:30px;height:30px;flex-shrink:0;border-radius:50%;border:2px solid var(--bg-dark);background:var(--white);color:var(--teal-dark);font-family:'Quicksand','Montserrat',sans-serif;font-size:0.8rem;font-weight:800;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;padding:0}
+.hint-btn:hover:not(.hint-used):not(.hint-locked){background:var(--teal);color:var(--white);border-color:var(--teal);transform:scale(1.12);box-shadow:0 4px 14px rgba(91,168,154,0.3)}
+.hint-btn.hint-used{background:var(--bg);color:var(--text-light);border-color:var(--bg-dark);cursor:default;opacity:0.5}
+.hint-btn.hint-active{background:var(--teal-dark);color:var(--white);border-color:var(--teal-dark);box-shadow:0 0 12px rgba(42,124,127,0.35)}
 .hint-btn.hint-locked{opacity:0.2;cursor:not-allowed}
-.hints-history{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:3px;overflow:hidden;mask-image:linear-gradient(to bottom,transparent 0,#000 18px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 18px);justify-content:flex-end}
+.hints-history{flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));grid-auto-rows:min-content;gap:3px 5px;width:100%;align-content:start;overflow:hidden}
 .hints-history.hidden{display:none}
-.hint-history-item{background:var(--bg);border-radius:8px;padding:0.3rem 0.55rem;text-align:left;border-left:3px solid var(--bg-dark);font-size:0.75rem;line-height:1.3;font-weight:600;animation:hintSlideIn 0.3s ease;flex-shrink:0}
+.hint-history-item{background:var(--bg);border-radius:6px;padding:0.2rem 0.4rem;text-align:left;border-left:3px solid var(--bg-dark);font-size:0.7rem;line-height:1.2;font-weight:600;animation:hintSlideIn 0.3s ease}
 .hint-history-item:last-child{border-left-color:var(--teal);background:linear-gradient(135deg,#e8f0ec,#dce8e2)}
 .hint-history-item .hint-number{font-weight:900;color:var(--teal-dark);margin-right:0.3rem;font-size:0.72rem;background:var(--white);padding:0.05rem 0.3rem;border-radius:4px}
 @keyframes hintSlideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-#guess-area{width:100%;display:flex;flex-direction:column;gap:0.35rem;flex-shrink:0}#guess-area.hidden{display:none}
-#guess-input{width:100%;padding:0.6rem 0.8rem;border:2px solid var(--bg-dark);border-radius:10px;font-family:'Quicksand','Montserrat',sans-serif;font-size:0.95rem;font-weight:600;outline:none;text-align:center;background:var(--bg);transition:all 0.2s}
+#guess-area{width:100%;display:flex;flex-direction:row;gap:0.4rem;flex-shrink:0;align-items:center}#guess-area.hidden{display:none}
+#guess-input{flex:1;min-width:0;padding:0.45rem 0.7rem;border:2px solid var(--bg-dark);border-radius:10px;font-family:'Quicksand','Montserrat',sans-serif;font-size:0.85rem;font-weight:600;outline:none;text-align:left;background:var(--bg);transition:all 0.2s}
 #guess-input:focus{border-color:var(--teal);background:var(--white);box-shadow:0 0 0 4px rgba(91,168,154,0.12)}
-.guess-buttons{display:flex;gap:0.4rem;justify-content:center;flex-wrap:wrap}
+.guess-buttons{display:flex;gap:0.35rem;justify-content:center;flex-shrink:0}
 .card-footer{display:flex;justify-content:space-between;width:100%;padding-top:0.35rem;border-top:1px solid var(--bg-dark);flex-shrink:0}
 .hints-counter,.points-counter{font-size:0.72rem;color:var(--text-light);font-weight:700}
 .points-counter strong{color:var(--teal-dark)}
